@@ -8,7 +8,7 @@ class Rover(object):
         'W': (-1, 0)
     }
 
-    def __init__(self, init_string):
+    def __init__(self, init_string, plateau_dimensions):
         '''
             x = current x coordinate
             y = current y coordinate
@@ -18,6 +18,10 @@ class Rover(object):
         self.x = int(x)
         self.y = int(y)
         self.o = o
+
+        max_x, max_y = plateau_dimensions
+        self.max_x = int(max_x)
+        self.max_y = int(max_y)
 
     def __repr__(self):
         return "<Rover x=%d, y=%d, o=%s>" % (self.x, self.y, self.o)
@@ -40,8 +44,15 @@ class Rover(object):
 
     def move(self):
         x, y = self.MOVEMENTS.get(self.o)
-        self.x += x
-        self.y += y
+        if not 0 <= self.x + x <= self.max_x:
+            pass
+        else:
+            self.x += x
+
+        if not 0 <= self.y + y <= self.max_y:
+            pass
+        else:
+            self.y += y
 
     def control(self, control_string):
         for c in control_string:
@@ -63,32 +74,21 @@ class ControlCenter(object):
         # take the input, split by newline and discard empty lines
         self.input = [line for line in text.split('\n') if line]
 
-
     def run(self):
         rover_states = []
         for i, line in enumerate(self.input):
             if i == 0:
-                # print 'grid size %s' % line
-                pass
+                plateau_dimensions = line.split(" ")
             elif (i % 2) == 1:
-                # print 'initialize rover %s' % line
-                rover = Rover(line)
+                rover = Rover(line, plateau_dimensions)
             else:
-                # print 'control rover %s' % line
                 state = rover.control(line)
                 rover_states.append(state)
-        
+
         return "\n".join(rover_states)
 
-test_input = "5 5\n\
-1 2 N\n\
-LMLMLMLMM\n\
-3 3 E\n\
-MMRMMRMRRM"
-
-test_output = "1 3 N\n\
-5 1 E"
-
-cc = ControlCenter(test_input)
-assert cc.run() == test_output
-
+if __name__ == "__main__":
+    from test_cases import tests
+    for test_input, test_output in tests:
+        cc = ControlCenter(test_input)
+        assert cc.run() == test_output
