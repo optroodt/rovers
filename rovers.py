@@ -102,9 +102,15 @@ class Rover(object):
 
 class ControlCenter(object):
 
-    def __init__(self, text):
+    def __init__(self):
+        self.input = ''
+        self.rovers = []
+
+    def set_input(self, text):
         ''' take the input, split by newline and discard empty lines '''
         self.input = [line for line in text.split('\n') if line]
+
+    def clear_rovers(self):
         self.rovers = []
 
     def initialize_rover(self, initial_position, plateau_dimensions):
@@ -146,8 +152,11 @@ class ControlCenter(object):
 if __name__ == "__main__":
     from test_cases import tests
     success = 0
+    cc = ControlCenter()
     for i, (test_input, test_output) in enumerate(tests, start=1):
-        cc = ControlCenter(test_input)
+        cc.clear_rovers()
+        cc.set_input(test_input)
+
         if cc.run() == test_output:
             success += 1
 

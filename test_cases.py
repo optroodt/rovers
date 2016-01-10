@@ -49,9 +49,16 @@ collision_output = "0 0 N\n\n\
 0 1 W\n\n\
 1 1 W"
 
+'''
+Empty input
+'''
+empty_input = ""
+empty_output = ""
+
 tests = [
     (test_input, test_output),
     (out_of_bounds_input, out_of_bounds_output),
     (out_of_bounds_placement_input, out_of_bounds_placement_output),
-    (collision_input, collision_output)
+    (collision_input, collision_output),
+    (empty_input, empty_output)
 ]
