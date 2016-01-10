@@ -8,7 +8,7 @@ LMLMLMLMM\n\
 3 3 E\n\
 MMRMMRMRRM"
 
-test_output = "1 3 N\n\
+test_output = "1 3 N\n\n\
 5 1 E"
 
 '''
@@ -23,6 +23,16 @@ MRRMM"
 out_of_bounds_output = "1 0 S"
 
 '''
+Testing out of bounds placement, we wouldn't want the rover to drop off a cliff
+as soon as it's deployed.
+'''
+out_of_bounds_placement_input = "2 2\n\
+3 3 N\n\
+RRRR"
+
+out_of_bounds_placement_output = "2 2 N"
+
+'''
 Testing rover collisions.
 Have 3 rovers bump into eachother. Well, actually prevent collisions by
 ignoring moves that would lead to a collision.
@@ -35,12 +45,13 @@ R\n\
 2 1 W\n\
 MM"
 
-collision_output = "0 0 N\n\
-0 1 W\n\
+collision_output = "0 0 N\n\n\
+0 1 W\n\n\
 1 1 W"
 
 tests = [
     (test_input, test_output),
     (out_of_bounds_input, out_of_bounds_output),
+    (out_of_bounds_placement_input, out_of_bounds_placement_output),
     (collision_input, collision_output)
 ]

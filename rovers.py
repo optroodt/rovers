@@ -9,19 +9,22 @@ class Rover(object):
     }
 
     def __init__(self, init_string, plateau_dimensions):
+        ''' 
+            give the rover a sense of the plateau it's on
+        '''
+        max_x, max_y = plateau_dimensions
+        self.max_x = int(max_x)
+        self.max_y = int(max_y)
+
         '''
             x = current x coordinate
             y = current y coordinate
             o = current orientation
         '''
         x, y, o = init_string.split(' ')
-        self.x = int(x)
-        self.y = int(y)
+        self.x = min(self.max_x, int(x))
+        self.y = min(self.max_y, int(y))
         self.o = o
-
-        max_x, max_y = plateau_dimensions
-        self.max_x = int(max_x)
-        self.max_y = int(max_y)
 
         self.obstacles = {}
 
@@ -105,17 +108,23 @@ class ControlCenter(object):
 
         ''' First setup the rovers, and collect the control statements '''
         for i, line in enumerate(self.input):
+            line = line.upper()
+
             if i == 0:
                 plateau_dimensions = line.split(" ")
             elif (i % 2) == 1:
                 rover = Rover(line, plateau_dimensions)
+                '''
+                    Add the rover to the list of rovers, set the initial 
+                    command to an ampty string.
+                '''
                 rovers.append([rover, ''])
             else:
                 rovers[-1][1] = line
 
         ''' 
-        Now that we have all the rovers initialized, we can pass their current
-        positions to the one that's going to move in order to avoid collisions.
+            Now that we have all the rovers initialized, we can pass their current
+            positions to the one that's going to move in order to avoid collisions.
         '''
         for i, (rover, movements) in enumerate(rovers):
             obstacles = [r.get_position()
@@ -125,7 +134,7 @@ class ControlCenter(object):
             state = rover.control(movements)
             rover_states.append(state)
 
-        return "\n".join(rover_states)
+        return "\n\n".join(rover_states)
 
 if __name__ == "__main__":
     from test_cases import tests
