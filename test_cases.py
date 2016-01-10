@@ -22,8 +22,25 @@ MRRMM"
 
 out_of_bounds_output = "1 0 S"
 
+'''
+Testing rover collisions.
+Have 3 rovers bump into eachother. Well, actually prevent collisions by
+ignoring moves that would lead to a collision.
+'''
+collision_input = "2 2\n\
+0 0 N\n\
+M\n\
+0 1 S\n\
+R\n\
+2 1 W\n\
+MM"
+
+collision_output = "0 0 N\n\
+0 1 W\n\
+1 1 W"
 
 tests = [
     (test_input, test_output),
-    (out_of_bounds_input, out_of_bounds_output)
+    (out_of_bounds_input, out_of_bounds_output),
+    (collision_input, collision_output)
 ]
