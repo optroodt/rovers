@@ -27,6 +27,7 @@ class Rover(object):
         self.o = o
 
         self.obstacles = {}
+        self.commands = ''
 
     def __repr__(self):
         return "<Rover x=%d, y=%d, o=%s>" % (self.x, self.y, self.o)
@@ -37,7 +38,7 @@ class Rover(object):
     def set_obstacles(self, locations):
         for x, y in locations:
             d = self.obstacles.setdefault(x, {})
-            d.setdefault(y, 'ROVER')
+            d.setdefault(y, 'ROVER')  # could be any value
 
     def is_location_free(self, x, y):
         column = self.obstacles.get(x)
@@ -82,8 +83,11 @@ class Rover(object):
             self.x += x
             self.y += y
 
-    def control(self, control_string):
-        for c in control_string:
+    def set_commands(self, command_string):
+        self.commands = command_string
+
+    def execute(self):
+        for c in self.commands:
             if c == 'L':
                 self.rotate_left()
             elif c == 'R':
@@ -101,10 +105,18 @@ class ControlCenter(object):
     def __init__(self, text):
         ''' take the input, split by newline and discard empty lines '''
         self.input = [line for line in text.split('\n') if line]
+        self.rovers = []
+
+    def initialize_rover(self, initial_position, plateau_dimensions):
+        rover = Rover(initial_position, plateau_dimensions)
+        '''
+            Initialize a rover and add it to a list of rovers for reference.
+        '''
+        self.rovers.append(rover)
+        return rover
 
     def run(self):
         rover_states = []
-        rovers = []
 
         ''' First setup the rovers, and collect the control statements '''
         for i, line in enumerate(self.input):
@@ -113,28 +125,23 @@ class ControlCenter(object):
             if i == 0:
                 plateau_dimensions = line.split(" ")
             elif (i % 2) == 1:
-                rover = Rover(line, plateau_dimensions)
-                '''
-                    Add the rover to the list of rovers, set the initial 
-                    command to an ampty string.
-                '''
-                rovers.append([rover, ''])
+                rover = self.initialize_rover(line, plateau_dimensions)
             else:
-                rovers[-1][1] = line
+                rover.set_commands(line)
 
         ''' 
             Now that we have all the rovers initialized, we can pass their current
             positions to the one that's going to move in order to avoid collisions.
         '''
-        for i, (rover, movements) in enumerate(rovers):
+        for i, rover in enumerate(self.rovers):
             obstacles = [r.get_position()
-                         for r, c in rovers[:i] + rovers[i + 1:]]
+                         for r in self.rovers[:i] + self.rovers[i + 1:]]
             rover.set_obstacles(obstacles)
-
-            state = rover.control(movements)
+            state = rover.execute()
             rover_states.append(state)
 
         return "\n\n".join(rover_states)
+
 
 if __name__ == "__main__":
     from test_cases import tests
